@@ -12,11 +12,12 @@ export const fiesta = {
   direccion: 'Tarapacá con Gustavo Pinto, más arriba del colegio "Las Cumbres", Tacna, Perú',
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Tarapacá con Gustavo Pinto, Tacna, Perú'),
   // Número de WhatsApp con código de país, sin "+" ni espacios
-  whatsapp: '5210000000000',
+  whatsapp: '51957295957',
   // Foto de Amy: colócala en /public/amy.jpg y cambia a true
   tieneFoto: true,
   invitados: [
     'Familia Acho',
     'Familia Quinteros',
+    'Familia Lith',
   ],
 };

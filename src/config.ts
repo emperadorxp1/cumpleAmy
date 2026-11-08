@@ -18,7 +18,7 @@ export const fiesta = {
   invitados: [
     'Familia Acho Damian',
     'Familia Quinteros Mac-Kay',
-    'Familia Ramos Loayza',
+    'Familia Loayza Ramos',
     'Familia Carrillo Sandoval',
     'Familia Livora Mamani',
     'Familia Heras Turpo',

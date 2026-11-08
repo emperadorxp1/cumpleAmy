@@ -17,7 +17,6 @@ export const fiesta = {
   tieneFoto: true,
   invitados: [
     'Familia Acho Damian',
-    'Familia Quinteros',
     'Familia Quinteros Mac-Kay',
     'Familia Ramos Loayza',
     'Familia Carrillo Sandoval',

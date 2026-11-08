@@ -1,0 +1,38 @@
+---
+// Globos que suben lentamente por detrás de todo el contenido.
+const colores = ['#FF6FAE', '#FFC94D', '#0FB5BA', '#FF7A59', '#B98CFF', '#FF6FAE', '#3BA55C', '#FFC94D'];
+const globos = colores.map((color, i) => ({
+  color,
+  x: (i * 37 + 6) % 94,
+  dur: 16 + (i % 4) * 4,
+  delay: -i * 3.1,
+  size: 38 + (i % 3) * 12,
+}));
+---
+
+<div class="globos" aria-hidden="true">
+  {globos.map((g) => (
+    <div class="globo" style={`left:${g.x}%; --dur:${g.dur}s; animation-delay:${g.delay}s; width:${g.size}px`}>
+      <svg viewBox="0 0 40 70">
+        <ellipse cx="20" cy="20" rx="17" ry="20" fill={g.color} />
+        <ellipse cx="13" cy="12" rx="4" ry="6" fill="#fff" opacity=".45" />
+        <path d="M17 39 L23 39 L20 43Z" fill={g.color} />
+        <path d="M20 43 C16 50 24 56 20 70" stroke={g.color} stroke-width="1.5" fill="none" opacity=".7" />
+      </svg>
+    </div>
+  ))}
+</div>
+
+<style>
+  .globos { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .globo {
+    position: absolute; bottom: -120px; opacity: .55;
+    animation: elevar var(--dur) linear infinite;
+  }
+  .globo svg { display: block; width: 100%; animation: balancear 3s ease-in-out infinite; transform-origin: 50% 0; }
+  @keyframes elevar {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -60vh); }
+    100% { transform: translate(-10px, -130vh); }
+  }
+</style>

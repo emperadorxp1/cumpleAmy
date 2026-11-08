@@ -1,0 +1,94 @@
+---
+import { fiesta } from '../config';
+const unidades = [
+  ['dias', 'días'],
+  ['horas', 'horas'],
+  ['min', 'min'],
+  ['seg', 'seg'],
+];
+---
+
+<section class="contador">
+  <span class="globo-reloj a" aria-hidden="true">🎉</span>
+  <span class="globo-reloj b" aria-hidden="true">🎁</span>
+  <div class="contenedor">
+    <span class="etiqueta reveal">Cuenta regresiva</span>
+    <h2 class="reveal d1">¡Ya falta poco!</h2>
+    <div class="reloj reveal d2" data-fecha={fiesta.fecha}>
+      {unidades.map(([id, label]) => (
+        <div class="caja">
+          <span class="valor display" data-u={id}>00</span>
+          <span class="label">{label}</span>
+        </div>
+      ))}
+    </div>
+    <p class="hoy-es display" hidden>¡Hoy es el gran día! 🎉</p>
+  </div>
+</section>
+
+<script>
+  const reloj = document.querySelector<HTMLElement>('.reloj');
+  if (reloj) {
+    const objetivo = new Date(reloj.dataset.fecha!).getTime();
+    const campos = Object.fromEntries(
+      [...reloj.querySelectorAll<HTMLElement>('[data-u]')].map((el) => [el.dataset.u!, el])
+    );
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    const poner = (el: HTMLElement, v: string) => {
+      if (el.textContent === v) return;
+      el.textContent = v;
+      el.classList.remove('tic');
+      void el.offsetWidth; // reinicia la animación
+      el.classList.add('tic');
+    };
+
+    const actualizar = () => {
+      const diff = Math.max(0, objetivo - Date.now());
+      const s = Math.floor(diff / 1000);
+      poner(campos.dias, pad(Math.floor(s / 86400)));
+      poner(campos.horas, pad(Math.floor((s % 86400) / 3600)));
+      poner(campos.min, pad(Math.floor((s % 3600) / 60)));
+      poner(campos.seg, pad(s % 60));
+      if (diff === 0) {
+        document.querySelector<HTMLElement>('.hoy-es')!.hidden = false;
+        clearInterval(timer);
+      }
+    };
+    const timer = setInterval(actualizar, 1000);
+    actualizar();
+  }
+</script>
+
+<style>
+  .contador {
+    text-align: center; color: #fff; margin-top: 72px;
+    background: linear-gradient(160deg, var(--turquesa), var(--oceano));
+    padding: 96px 0;
+    clip-path: ellipse(140% 100% at 50% 100%);
+  }
+  .contador h2 { color: #fff; }
+  .reloj { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 24px; }
+  .caja {
+    border-radius: 22px; padding: 18px 4px 12px;
+    perspective: 300px;
+    box-shadow: 0 6px 0 rgba(0,0,0,.12), 0 14px 24px rgba(8,70,90,.25);
+    animation: flotar 2.6s ease-in-out infinite;
+  }
+  .caja:nth-child(1) { background: var(--coral); --r: -3deg; }
+  .caja:nth-child(2) { background: var(--rosa); --r: 2deg; animation-delay: -.6s; }
+  .caja:nth-child(3) { background: var(--sol); color: var(--profundo); --r: -2deg; animation-delay: -1.2s; }
+  .caja:nth-child(4) { background: var(--lila); --r: 3deg; animation-delay: -1.8s; }
+  .valor { display: block; font-size: clamp(2rem, 10vw, 2.8rem); font-weight: 700; }
+  .valor.tic { animation: voltear .6s cubic-bezier(.3,1.8,.5,1); }
+  @keyframes voltear {
+    from { transform: rotateX(-90deg) scale(.6); opacity: .2; }
+    60% { transform: scale(1.25); }
+    to { transform: none; opacity: 1; }
+  }
+  .globo-reloj { position: absolute; font-size: 42px; animation: flotar 3s ease-in-out infinite; }
+  .globo-reloj.a { top: 40px; left: 6%; --r: -10deg; }
+  .globo-reloj.b { top: 70px; right: 6%; --r: 10deg; animation-delay: -1.4s; }
+  .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .14em; opacity: .85; }
+  .hoy-es { margin-top: 24px; font-size: 1.6rem; animation: flotar 3s ease-in-out infinite; }
+</style>

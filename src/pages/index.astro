@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Globos from '../components/Globos.astro';
+import Hero from '../components/Hero.astro';
+import Invitacion from '../components/Invitacion.astro';
+import Gustos from '../components/Gustos.astro';
+import Countdown from '../components/Countdown.astro';
+import Rsvp from '../components/Rsvp.astro';
+import { fiesta } from '../config';
+---
+
+<Layout>
+  <Globos />
+  <Hero />
+  <main>
+    <Invitacion />
+    <Gustos />
+    <Countdown />
+    <Rsvp />
+  </main>
+  <footer>
+    <div class="mar" aria-hidden="true">
+      <span class="pez p1">🐠</span>
+      <span class="pez p2">🐢</span>
+      <span class="pez p3">🐟</span>
+    </div>
+    <p>Con cariño, <strong>{fiesta.nombreCorto}</strong> y familia <span class="corazon">💖</span></p>
+  </footer>
+</Layout>
+
+<style>
+  footer { text-align: center; padding: 16px 20px 48px; color: var(--suave); font-size: .95rem; overflow: hidden; }
+  .mar { position: relative; height: 56px; }
+  .pez { position: absolute; left: 0; top: 10px; font-size: 30px; animation: nadar 12s linear infinite; }
+  .pez.p2 { top: 18px; animation-duration: 18s; animation-delay: -7s; font-size: 26px; }
+  .pez.p3 { top: 4px; animation-duration: 9s; animation-delay: -3s; font-size: 22px; }
+  @keyframes nadar {
+    0% { transform: translate(-60px, 0) scaleX(-1); }
+    25% { transform: translate(25vw, -8px) scaleX(-1); }
+    50% { transform: translate(50vw, 6px) scaleX(-1); }
+    75% { transform: translate(75vw, -6px) scaleX(-1); }
+    100% { transform: translate(calc(100vw + 20px), 0) scaleX(-1); }
+  }
+  .corazon { display: inline-block; animation: latido .9s ease-in-out infinite; }
+</style>

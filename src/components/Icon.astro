@@ -1,0 +1,74 @@
+---
+// Pequeña colección de dibujos SVG originales con temática de océano/isla.
+interface Props {
+  name: 'hibisco' | 'concha' | 'estrella' | 'hoja' | 'libro' | 'puzzle' | 'ola';
+  size?: number;
+  class?: string;
+  style?: string;
+}
+const { name, size = 48, class: cls = '', style = '' } = Astro.props;
+---
+
+<svg
+  class={cls}
+  style={style}
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  aria-hidden="true"
+  fill="none"
+>
+  {name === 'hibisco' && (
+    <g>
+      {[0, 72, 144, 216, 288].map((a) => (
+        <ellipse cx="32" cy="17" rx="10" ry="15" fill="#FF7A59" transform={`rotate(${a} 32 32)`} />
+      ))}
+      {[36, 108, 180, 252, 324].map((a) => (
+        <ellipse cx="32" cy="20" rx="5" ry="10" fill="#FF9B80" transform={`rotate(${a} 32 32)`} />
+      ))}
+      <circle cx="32" cy="32" r="6" fill="#FFC94D" />
+      <circle cx="32" cy="32" r="2.5" fill="#E8553A" />
+    </g>
+  )}
+  {name === 'concha' && (
+    <g>
+      <path d="M32 8 C14 12 6 30 10 46 L32 56 L54 46 C58 30 50 12 32 8Z" fill="#FFD6C7" />
+      <path d="M32 10 L32 54 M32 10 L20 50 M32 10 L44 50 M32 10 L12 42 M32 10 L52 42" stroke="#FF9B80" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M24 54 h16 l-4 6 h-8z" fill="#FF9B80" />
+    </g>
+  )}
+  {name === 'estrella' && (
+    <path
+      d="M32 6 C35 18 38 22 58 24 C44 32 42 36 48 56 C38 46 26 46 16 56 C22 36 20 32 6 24 C26 22 29 18 32 6Z"
+      fill="#FFC94D"
+      stroke="#F5A623"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  )}
+  {name === 'hoja' && (
+    <g>
+      <path d="M10 56 C10 26 30 8 58 6 C56 34 38 54 10 56Z" fill="#3BA55C" />
+      <path d="M10 56 C24 40 38 24 54 10" stroke="#2A7F45" stroke-width="2.5" stroke-linecap="round" />
+    </g>
+  )}
+  {name === 'libro' && (
+    <g>
+      <path d="M32 16 C24 10 14 10 6 12 V52 C14 50 24 50 32 56Z" fill="#0FB5BA" />
+      <path d="M32 16 C40 10 50 10 58 12 V52 C50 50 40 50 32 56Z" fill="#0A6E8A" />
+      <path d="M12 22 C18 21 23 22 27 24 M12 30 C18 29 23 30 27 32 M37 24 C41 22 46 21 52 22 M37 32 C41 30 46 29 52 30" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+    </g>
+  )}
+  {name === 'puzzle' && (
+    <path
+      d="M10 18 H24 C22 10 34 10 32 18 H46 V30 C54 28 54 40 46 38 V52 H32 C34 44 22 44 24 52 H10 V38 C18 40 18 28 10 30Z"
+      fill="#FF7A59"
+      stroke="#E8553A"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  )}
+  {name === 'ola' && (
+    <path d="M4 40 C14 24 24 24 30 34 C34 42 44 42 48 32 C52 22 60 26 60 26 V56 H4Z" fill="#0FB5BA" />
+  )}
+</svg>

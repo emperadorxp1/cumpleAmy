@@ -1,0 +1,160 @@
+---
+import { fiesta } from '../config';
+const titulo = `${fiesta.nombreCorto} cumple ${fiesta.edad} 🌺`;
+const descripcion = `Te invito a mi cumpleaños el ${fiesta.fechaTexto}. ¡Confirma tu asistencia!`;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0FB5BA" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+    <script>
+      import { chispas } from '../scripts/fiesta';
+
+      // Títulos: cada letra brinca por separado
+      document.querySelectorAll<HTMLElement>('h2').forEach((h) => {
+        const texto = h.textContent ?? '';
+        h.setAttribute('aria-label', texto);
+        h.innerHTML = '';
+        [...texto].forEach((c, j) => {
+          if (c === ' ') return h.append(' ');
+          const s = document.createElement('span');
+          s.className = 'letra-h';
+          s.setAttribute('aria-hidden', 'true');
+          s.style.setProperty('--j', String(j));
+          s.textContent = c;
+          h.append(s);
+        });
+      });
+
+      // Revela elementos al entrar en pantalla
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.15 }
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+      // Chispitas mágicas en cada toque
+      document.addEventListener('pointerdown', (e) => chispas(e.clientX, e.clientY));
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --turquesa: #0fb5ba;
+    --oceano: #0a6e8a;
+    --profundo: #08465a;
+    --arena: #f7ebdd;
+    --coral: #ff7a59;
+    --rosa: #ff6fae;
+    --rosa-claro: #ffe3ef;
+    --lila: #b98cff;
+    --hoja: #3ba55c;
+    --sol: #ffc94d;
+    --blanco: #fffdf9;
+    --texto: #23404a;
+    --suave: #5d7a83;
+    --radio: 28px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    color: var(--texto);
+    background: var(--blanco);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3, .display { font-family: 'Fredoka', 'Quicksand', sans-serif; line-height: 1.1; }
+  .contenedor { width: 100%; max-width: 560px; margin: 0 auto; padding: 0 20px; }
+  section { position: relative; padding: 72px 0; }
+  .etiqueta {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #d63d84;
+    background: var(--rosa-claro);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    animation: latido 2.4s ease-in-out infinite;
+  }
+  h2 { font-size: clamp(1.9rem, 8vw, 2.6rem); color: var(--profundo); margin-bottom: 16px; }
+
+  .letra-h {
+    display: inline-block;
+    animation: brincar 2.8s ease-in-out infinite;
+    animation-delay: calc(var(--j) * 0.09s);
+  }
+
+  .reveal { opacity: 0; transform: translateY(40px) scale(.9); transition: opacity 0.7s ease, transform 0.9s cubic-bezier(.2,1.5,.4,1); }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 0.12s; }
+  .reveal.d2 { transition-delay: 0.24s; }
+  .reveal.d3 { transition-delay: 0.36s; }
+
+  @keyframes flotar {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-14px) rotate(calc(var(--r, 0deg) + 6deg)); }
+  }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  @keyframes brincar {
+    0%, 60%, 100% { transform: translateY(0) rotate(0); }
+    20% { transform: translateY(-10px) rotate(-6deg); }
+    40% { transform: translateY(0) rotate(4deg); }
+  }
+  @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+  @keyframes menear {
+    0%, 78%, 100% { transform: rotate(0); }
+    82% { transform: rotate(-5deg) scale(1.04); }
+    86% { transform: rotate(5deg) scale(1.04); }
+    90% { transform: rotate(-3deg); }
+    94% { transform: rotate(2deg); }
+  }
+  @keyframes balancear { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
+  /* Confeti y chispas (src/scripts/fiesta.ts) */
+  #capa-fiesta { position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden; }
+  .confeti { position: absolute; top: -40px; animation: caer 3s cubic-bezier(.3,.6,.6,1) forwards; }
+  .confeti.papel { border-radius: 2px; }
+  @keyframes caer {
+    50% { transform: translate(var(--dx), 55vh) rotate(calc(var(--giro) / 2)); }
+    100% { transform: translate(calc(var(--dx) * -1), 110vh) rotate(var(--giro)); }
+  }
+  .chispa {
+    position: absolute; font-size: 18px; margin: -10px 0 0 -10px;
+    animation: estallar .85s cubic-bezier(.2,.8,.3,1) forwards;
+  }
+  @keyframes estallar {
+    0% { transform: translate(0, 0) scale(.3); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(40deg); opacity: 0; }
+  }
+</style>

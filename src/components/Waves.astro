@@ -1,0 +1,34 @@
+---
+// Olas animadas en capas. `color` es el color de la capa frontal (debe coincidir con la sección siguiente).
+interface Props { color?: string; flip?: boolean }
+const { color = 'var(--blanco)', flip = false } = Astro.props;
+---
+
+<div class:list={['olas', { flip }]} aria-hidden="true">
+  <svg viewBox="0 24 150 28" preserveAspectRatio="none">
+    <defs>
+      <path id="ola-path" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+    </defs>
+    <g class="capas">
+      <use href="#ola-path" x="48" y="0" fill="rgba(255,255,255,0.35)" />
+      <use href="#ola-path" x="48" y="3" fill="rgba(255,255,255,0.55)" />
+      <use href="#ola-path" x="48" y="5" fill="rgba(255,255,255,0.75)" />
+      <use href="#ola-path" x="48" y="7" fill={color} />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .olas { position: absolute; left: 0; right: 0; bottom: -1px; height: clamp(60px, 12vw, 110px); line-height: 0; pointer-events: none; }
+  .olas.flip { top: -1px; bottom: auto; transform: rotate(180deg); }
+  svg { width: 100%; height: 100%; }
+  .capas use { animation: mover 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+  .capas use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
+  .capas use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+  .capas use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+  .capas use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+  @keyframes mover {
+    0% { transform: translate3d(-90px, 0, 0); }
+    100% { transform: translate3d(85px, 0, 0); }
+  }
+</style>

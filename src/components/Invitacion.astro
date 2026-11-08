@@ -1,0 +1,76 @@
+---
+import { fiesta } from '../config';
+import Icon from './Icon.astro';
+---
+
+<section id="invitacion" class="invitacion">
+  <div class="contenedor">
+    <div class="tarjeta reveal">
+      <Icon name="hibisco" size={56} class="flor" />
+      <span class="globitos izq" aria-hidden="true">🎈</span>
+      <span class="globitos der" aria-hidden="true">🎈</span>
+      <p class="intro display">¡Quiero invitarte a mi cumpleaños!</p>
+      <p class="sub">Ven a navegar conmigo hacia una tarde llena de olas, juegos y pastel 🌊</p>
+
+      <ul class="datos">
+        <li class="reveal d1">
+          <span class="ic" style="--k:0">📅</span>
+          <div><small>Cuándo</small><strong>{fiesta.fechaTexto}</strong></div>
+        </li>
+        <li class="reveal d2">
+          <span class="ic" style="--k:1">⏰</span>
+          <div><small>Hora</small><strong>{fiesta.hora}</strong></div>
+        </li>
+        <li class="reveal d3">
+          <span class="ic" style="--k:2">📍</span>
+          <div><small>Dónde</small><strong>{fiesta.lugar}</strong><span>{fiesta.direccion}</span></div>
+        </li>
+      </ul>
+
+      <a class="boton-sec" href={fiesta.mapsUrl} target="_blank" rel="noopener">Cómo llegar →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .invitacion { padding-top: 24px; }
+  .tarjeta {
+    position: relative; text-align: center;
+    background: #fff; border-radius: var(--radio); padding: 48px 24px 32px;
+    box-shadow: 0 1px 0 rgba(10,110,138,.06), 0 24px 60px -20px rgba(10,110,138,.35);
+  }
+  :global(.flor) { position: absolute; top: -28px; left: 50%; margin-left: -28px; animation: girar 8s linear infinite; }
+  .globitos { position: absolute; top: -18px; font-size: 38px; animation: flotar 3s ease-in-out infinite; }
+  .globitos.izq { left: 8px; --r: -12deg; }
+  .globitos.der { right: 8px; --r: 12deg; animation-delay: -1.5s; filter: hue-rotate(160deg); }
+
+  .intro {
+    font-size: clamp(1.7rem, 7vw, 2.1rem); font-weight: 700; margin-bottom: 10px;
+    background: linear-gradient(90deg, var(--coral), var(--rosa), var(--lila), var(--rosa), var(--coral));
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: arcoiris 4s linear infinite, latido 2s ease-in-out infinite;
+  }
+  @keyframes arcoiris { to { background-position: 200% 0; } }
+  .sub { color: var(--suave); line-height: 1.5; max-width: 34ch; margin: 0 auto 28px; }
+
+  .datos { list-style: none; display: grid; gap: 12px; text-align: left; margin-bottom: 28px; }
+  .datos li {
+    display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 18px; background: var(--arena);
+  }
+  .datos li:nth-child(2) { background: var(--rosa-claro); }
+  .datos li:nth-child(3) { background: #e3f7f6; }
+  .ic { font-size: 1.6rem; display: inline-block; animation: brincar 2.4s ease-in-out infinite; animation-delay: calc(var(--k) * .3s); }
+  .datos small { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; color: var(--oceano); font-weight: 700; }
+  .datos strong { display: block; font-size: 1.05rem; }
+  .datos strong::first-letter { text-transform: uppercase; }
+  .datos span:not(.ic) { display: block; font-size: .88rem; color: var(--suave); }
+
+  .boton-sec {
+    display: inline-block; padding: 12px 22px; border-radius: 999px; font-weight: 700;
+    color: var(--oceano); border: 2px solid var(--turquesa); text-decoration: none;
+    transition: background .25s, color .25s;
+    animation: menear 3.5s ease-in-out infinite;
+  }
+  .boton-sec:hover { background: var(--turquesa); color: #fff; }
+</style>

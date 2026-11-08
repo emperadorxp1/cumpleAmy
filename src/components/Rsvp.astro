@@ -1,0 +1,232 @@
+---
+import { fiesta } from '../config';
+---
+
+<section class="rsvp" id="confirmar">
+  <div class="contenedor">
+    <span class="etiqueta reveal">Confirmación</span>
+    <h2 class="reveal d1">¿Vienes a mi fiesta?</h2>
+    <p class="intro reveal d1">Por favor selecciona tu nombre y confirma tu asistencia 💌</p>
+
+    <form class="formulario reveal d2" data-whatsapp={fiesta.whatsapp} data-cumple={fiesta.nombreCorto}>
+      <label class="campo">
+        <span>Tu nombre</span>
+        <select name="nombre" required>
+          <option value="" disabled selected>Selecciona tu nombre…</option>
+          {fiesta.invitados.map((n) => <option value={n}>{n}</option>)}
+          <option value="__otro">Otro (escribir mi nombre)</option>
+        </select>
+      </label>
+
+      <label class="campo otro" hidden>
+        <span>Escribe tu nombre</span>
+        <input type="text" name="otro" placeholder="Nombre y apellido" autocomplete="name" />
+      </label>
+
+      <fieldset class="opciones">
+        <legend>¿Asistirás?</legend>
+        <label class="opcion">
+          <input type="radio" name="asiste" value="si" required />
+          <span><b>🌺</b> ¡Sí, voy!</span>
+        </label>
+        <label class="opcion">
+          <input type="radio" name="asiste" value="no" />
+          <span><b>🐚</b> No podré ir</span>
+        </label>
+      </fieldset>
+
+      <div class="campo personas">
+        <span>¿Cuántas personas vienen?</span>
+        <div class="contadores">
+          <div class="contador" data-tipo="adultos">
+            <small>Adultos</small>
+            <div class="stepper">
+              <button type="button" data-paso="-1" aria-label="Menos adultos">−</button>
+              <output>1</output>
+              <button type="button" data-paso="1" aria-label="Más adultos">+</button>
+            </div>
+          </div>
+          <div class="contador" data-tipo="ninos">
+            <small>Niños</small>
+            <div class="stepper">
+              <button type="button" data-paso="-1" aria-label="Menos niños">−</button>
+              <output>0</output>
+              <button type="button" data-paso="1" aria-label="Más niños">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="boton">Confirmar por WhatsApp</button>
+      <p class="error" role="alert" hidden></p>
+    </form>
+
+    <div class="gracias" hidden>
+      <div class="ola-gracias">🌊</div>
+      <h3 class="display"></h3>
+      <p></p>
+      <button type="button" class="boton-sec cambiar">Cambiar respuesta</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { lanzarConfeti } from '../scripts/fiesta';
+  const form = document.querySelector<HTMLFormElement>('.formulario')!;
+  const gracias = document.querySelector<HTMLElement>('.gracias')!;
+  const select = form.elements.namedItem('nombre') as HTMLSelectElement;
+  const otroWrap = form.querySelector<HTMLElement>('.otro')!;
+  const otroInput = form.elements.namedItem('otro') as HTMLInputElement;
+  const personasWrap = form.querySelector<HTMLElement>('.personas')!;
+  const error = form.querySelector<HTMLElement>('.error')!;
+  const CLAVE = 'rsvp-amy';
+  const cantidad = { adultos: 1, ninos: 0 };
+
+  select.addEventListener('change', () => {
+    const esOtro = select.value === '__otro';
+    otroWrap.hidden = !esOtro;
+    otroInput.required = esOtro;
+    if (esOtro) otroInput.focus();
+  });
+
+  form.querySelectorAll<HTMLElement>('.contador').forEach((c) => {
+    const tipo = c.dataset.tipo as keyof typeof cantidad;
+    const output = c.querySelector('output')!;
+    c.querySelectorAll<HTMLButtonElement>('[data-paso]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cantidad[tipo] = Math.min(10, Math.max(0, cantidad[tipo] + Number(b.dataset.paso)));
+        output.textContent = String(cantidad[tipo]);
+        output.classList.remove('salto');
+        void output.offsetWidth; // reinicia la animación
+        output.classList.add('salto');
+      })
+    );
+  });
+
+  const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno : varios}`;
+
+  form.addEventListener('change', () => {
+    const asiste = (form.elements.namedItem('asiste') as RadioNodeList).value;
+    personasWrap.classList.toggle('oculto', asiste === 'no');
+  });
+
+  const mostrarGracias = (nombre: string, asiste: boolean) => {
+    form.hidden = true;
+    gracias.hidden = false;
+    gracias.querySelector('h3')!.textContent = asiste ? `¡Gracias, ${nombre}!` : `¡Te extrañaremos, ${nombre}!`;
+    gracias.querySelector('p')!.textContent = asiste
+      ? `${form.dataset.cumple} está feliz de que vengas. ¡Nos vemos en la fiesta! 🌺`
+      : 'Gracias por avisarnos. ¡Te mandamos un abrazo de ola! 🌊';
+  };
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nombre = (select.value === '__otro' ? otroInput.value : select.value).trim();
+    const asisteVal = (form.elements.namedItem('asiste') as RadioNodeList).value;
+    if (!nombre || !asisteVal) {
+      error.textContent = !nombre ? 'Selecciona o escribe tu nombre 🙂' : 'Cuéntanos si podrás asistir 🙂';
+      error.hidden = false;
+      return;
+    }
+    const asiste = asisteVal === 'si';
+    const { adultos, ninos } = cantidad;
+    if (asiste && adultos + ninos === 0) {
+      error.textContent = 'Indica cuántas personas vienen 🙂';
+      error.hidden = false;
+      return;
+    }
+    error.hidden = true;
+    const cumple = form.dataset.cumple;
+    const detalle = [adultos && plural(adultos, 'adulto', 'adultos'), ninos && plural(ninos, 'niño', 'niños')]
+      .filter(Boolean)
+      .join(' y ');
+    const texto = asiste
+      ? `¡Hola! Soy ${nombre} y confirmo que SÍ asistiremos al cumpleaños de ${cumple} 🌺 Seremos ${detalle}.`
+      : `¡Hola! Soy ${nombre}. Lamentablemente NO podré asistir al cumpleaños de ${cumple}. ¡Muchas felicidades! 🐚`;
+    const url = `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(texto)}`;
+
+    try { localStorage.setItem(CLAVE, JSON.stringify({ nombre, asiste })); } catch {}
+    mostrarGracias(nombre, asiste);
+    if (asiste) lanzarConfeti(90);
+    window.open(url, '_blank', 'noopener');
+  });
+
+  gracias.querySelector('.cambiar')!.addEventListener('click', () => {
+    try { localStorage.removeItem(CLAVE); } catch {}
+    gracias.hidden = true;
+    form.hidden = false;
+  });
+
+  try {
+    const guardado = JSON.parse(localStorage.getItem(CLAVE) || 'null');
+    if (guardado) mostrarGracias(guardado.nombre, guardado.asiste);
+  } catch {}
+</script>
+
+<style>
+  .rsvp { text-align: center; overflow: hidden; }
+  .intro { color: var(--suave); margin-bottom: 28px; line-height: 1.5; }
+  .formulario { display: grid; gap: 18px; text-align: left; }
+  .campo { display: grid; gap: 8px; }
+  .campo > span, legend { font-weight: 700; font-size: .9rem; color: var(--profundo); }
+  select, input[type='text'] {
+    font: inherit; font-size: 1rem; padding: 14px 16px; border-radius: 16px;
+    border: 2px solid #d9ecec; background: #fff; color: var(--texto); width: 100%;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--turquesa); box-shadow: 0 0 0 4px rgba(15,181,186,.18); }
+
+  .opciones { border: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  legend { margin-bottom: 8px; }
+  .opcion input { position: absolute; opacity: 0; pointer-events: none; }
+  .opcion span {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px 8px; border-radius: 20px; background: var(--arena); cursor: pointer;
+    font-weight: 700; border: 2px solid transparent; transition: all .25s;
+  }
+  .opcion b { font-size: 1.8rem; transition: transform .3s cubic-bezier(.3,1.6,.5,1); }
+  .opcion:nth-child(2) span { background: var(--rosa-claro); }
+  .opcion span:hover { transform: translateY(-3px); }
+  .opcion input:checked + span { border-color: var(--rosa); background: #fff; animation: brinco .5s cubic-bezier(.3,1.8,.5,1); box-shadow: 0 10px 20px -8px rgba(255,111,174,.6); }
+  .opcion input:checked + span b { transform: scale(1.35) rotate(-10deg); animation: brincar 1.6s ease-in-out infinite; }
+  @keyframes brinco { 40% { transform: scale(1.1); } 70% { transform: scale(.96); } }
+  .opcion input:focus-visible + span { box-shadow: 0 0 0 4px rgba(15,181,186,.25); }
+
+  .personas { transition: opacity .3s, max-height .3s; max-height: 160px; overflow: hidden; }
+  .contadores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .contador { display: grid; justify-items: center; gap: 6px; padding: 12px 8px; border-radius: 20px; background: var(--arena); }
+  .contador small { font-weight: 700; font-size: .85rem; color: var(--suave); }
+  .contador .stepper { gap: 10px; }
+  .contador .stepper button { background: #fff; width: 38px; height: 38px; }
+  .personas.oculto { opacity: 0; max-height: 0; }
+  .stepper { display: flex; align-items: center; gap: 18px; }
+  .stepper button {
+    width: 44px; height: 44px; border-radius: 50%; border: 0; font-size: 1.4rem;
+    background: var(--arena); color: var(--oceano); cursor: pointer;
+  }
+  .stepper button:active { transform: scale(.85); }
+  .stepper output { font-family: 'Fredoka', sans-serif; font-size: 1.6rem; min-width: 2ch; text-align: center; display: inline-block; }
+  .stepper output.salto { animation: brinco .45s cubic-bezier(.3,1.8,.5,1); }
+
+  .boton {
+    font: inherit; font-weight: 700; font-size: 1.1rem; color: #fff; cursor: pointer;
+    border: 0; border-radius: 999px; padding: 16px 24px; margin-top: 6px;
+    background: linear-gradient(135deg, var(--coral), var(--rosa), var(--coral));
+    background-size: 200% 100%;
+    box-shadow: 0 12px 24px -10px rgba(255,111,174,.9);
+    transition: scale .2s;
+    animation: pulso 2.6s ease-in-out infinite, menear 3s ease-in-out infinite, brillo 3s linear infinite;
+  }
+  .boton:hover { scale: 1.04; }
+  .boton:active { scale: .96; }
+  @keyframes brillo { to { background-position: 200% 0; } }
+  @keyframes pulso { 50% { box-shadow: 0 12px 32px -6px rgba(255,122,89,.9); } }
+  .error { color: #d6452b; font-weight: 600; text-align: center; }
+
+  .gracias { padding: 32px 20px; background: var(--arena); border-radius: var(--radio); animation: aparecer .6s cubic-bezier(.2,1.4,.4,1); }
+  .gracias h3 { font-size: 1.7rem; color: var(--coral); margin: 8px 0; }
+  .gracias p { color: var(--suave); margin-bottom: 20px; line-height: 1.5; }
+  .ola-gracias { font-size: 3rem; animation: flotar 3s ease-in-out infinite; }
+  .boton-sec { font: inherit; font-weight: 700; color: var(--oceano); background: none; border: 2px solid var(--turquesa); border-radius: 999px; padding: 10px 20px; cursor: pointer; }
+  @keyframes aparecer { from { transform: scale(.8); opacity: 0; } }
+</style>

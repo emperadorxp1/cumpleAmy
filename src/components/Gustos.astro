@@ -1,0 +1,93 @@
+---
+const piezas = [
+  { x: 0, y: 0, color: '#FF7A59', desde: 'translate(-40px,-40px) rotate(-40deg)' },
+  { x: 30, y: 0, color: '#FF6FAE', desde: 'translate(40px,-40px) rotate(40deg)' },
+  { x: 0, y: 30, color: '#0FB5BA', desde: 'translate(-40px,40px) rotate(30deg)' },
+  { x: 30, y: 30, color: '#FFC94D', desde: 'translate(40px,40px) rotate(-30deg)' },
+];
+---
+
+<section class="gustos">
+  <div class="contenedor">
+    <span class="etiqueta reveal">Un poquito de mí</span>
+    <h2 class="reveal d1">Me gustan…</h2>
+    <div class="tarjetas">
+      <article class="tarjeta reveal d1" style="--c:#e3f7f6">
+        <svg class="libro" viewBox="0 0 80 64" width="96" aria-hidden="true">
+          <path d="M40 14 C30 8 16 8 4 10 V54 C16 52 30 52 40 58Z" fill="#0FB5BA" />
+          <path d="M40 14 C50 8 64 8 76 10 V54 C64 52 50 52 40 58Z" fill="#0A6E8A" />
+          <path d="M40 16 C31 11 19 11 8 13 V50 C19 48 31 49 40 54Z" fill="#fff" />
+          <path d="M40 16 C49 11 61 11 72 13 V50 C61 48 49 49 40 54Z" fill="#fff" />
+          <path class="pagina p1" d="M40 16 C49 11 61 11 72 13 V50 C61 48 49 49 40 54Z" fill="#FFE3EF" stroke="#FFC2DD" />
+          <path class="pagina p2" d="M40 16 C49 11 61 11 72 13 V50 C61 48 49 49 40 54Z" fill="#FFF6D6" stroke="#FFE27A" />
+          <path d="M14 22 C20 21 28 22 34 24 M14 30 C20 29 28 30 34 32 M14 38 C20 37 28 38 34 40" stroke="#bfe9e7" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+        <span class="vuela v1" aria-hidden="true">⭐</span>
+        <span class="vuela v2" aria-hidden="true">🐚</span>
+        <h3>los libros</h3>
+        <p>Cuentos de islas, océanos y aventuras.</p>
+      </article>
+
+      <article class="tarjeta reveal d2" style="--c:#ffe9e2; animation-delay:-1.5s">
+        <svg class="puzzle" viewBox="-8 -8 76 76" width="96" aria-hidden="true">
+          {piezas.map((p, i) => (
+            <g class="pieza" style={`--desde:${p.desde}; animation-delay:${i * 0.25}s`}>
+              <rect x={p.x} y={p.y} width="28" height="28" rx="6" fill={p.color} />
+              <circle cx={p.x + 14} cy={p.y + 14} r="4" fill="#fff" opacity=".45" />
+            </g>
+          ))}
+        </svg>
+        <span class="vuela v1" aria-hidden="true">✨</span>
+        <span class="vuela v2" aria-hidden="true">🧩</span>
+        <h3>los rompecabezas</h3>
+        <p>¡Pieza por pieza hasta completarlo!</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gustos { text-align: center; }
+  .tarjetas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .tarjeta {
+    position: relative;
+    background: var(--c); border-radius: var(--radio); padding: 28px 14px 24px;
+    animation: balancear 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: scale .3s cubic-bezier(.3,1.6,.5,1);
+  }
+  .tarjeta:hover, .tarjeta:active { scale: 1.06; }
+  .tarjeta h3 { font-size: 1.3rem; color: var(--profundo); margin: 12px 0 6px; }
+  .tarjeta p { font-size: .9rem; color: var(--suave); line-height: 1.45; }
+
+  /* Libro: páginas que se pasan */
+  .libro { animation: flotar 3s ease-in-out infinite; }
+  .pagina { transform-origin: 40px 34px; animation: pasar 3s ease-in-out infinite; }
+  .p2 { animation-delay: 1.5s; }
+  @keyframes pasar {
+    0%, 10% { transform: scaleX(1); }
+    50%, 100% { transform: scaleX(-1); }
+  }
+
+  /* Rompecabezas que se arma solo */
+  .pieza {
+    transform-box: fill-box; transform-origin: center;
+    animation: armar 4s cubic-bezier(.3,1.4,.5,1) infinite;
+  }
+  @keyframes armar {
+    0% { transform: var(--desde) scale(.4); opacity: 0; }
+    22%, 70% { transform: none; opacity: 1; }
+    78% { transform: scale(1.12); }
+    86% { transform: none; opacity: 1; }
+    100% { transform: var(--desde) scale(.4); opacity: 0; }
+  }
+
+  .vuela { position: absolute; font-size: 18px; animation: titilarG 2.6s ease-in-out infinite; }
+  .v1 { top: 14px; right: 16px; }
+  .v2 { top: 34px; left: 14px; animation-delay: -1.3s; }
+  @keyframes titilarG {
+    0%, 100% { transform: translateY(0) scale(.8) rotate(-10deg); opacity: .5; }
+    50% { transform: translateY(-12px) scale(1.15) rotate(10deg); opacity: 1; }
+  }
+  @media (max-width: 360px) { .tarjetas { grid-template-columns: 1fr; } }
+</style>

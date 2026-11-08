@@ -1,0 +1,264 @@
+---
+import { fiesta } from '../config';
+import Icon from './Icon.astro';
+import Waves from './Waves.astro';
+const palabras = fiesta.nombre.split(' ');
+const coloresLetra = ['#ffffff', '#FFE27A', '#FFC2DD', '#ffffff', '#C9F7F2'];
+let n = 0; // índice global de letra para escalonar animaciones
+const destellos = [
+  [12, 22], [85, 30], [22, 62], [78, 66], [50, 8], [92, 50], [6, 40], [64, 20],
+];
+---
+
+<header class="hero">
+  <div class="sol" aria-hidden="true"></div>
+  <div class="burbujas" aria-hidden="true">
+    {Array.from({ length: 14 }).map((_, i) => (
+      <span style={`--x:${(i * 83) % 100}%; --d:${6 + (i % 5) * 1.6}s; --s:${6 + (i % 4) * 5}px; --delay:-${i * 0.9}s`} />
+    ))}
+  </div>
+  <div class="destellos" aria-hidden="true">
+    {destellos.map(([x, y], i) => (
+      <span style={`left:${x}%; top:${y}%; animation-delay:-${i * 0.45}s`}>✦</span>
+    ))}
+  </div>
+
+  <Icon name="hoja" size={70} class="deco" style="top:8%;left:-14px;--r:-20deg;animation-duration:4s" />
+  <Icon name="hibisco" size={54} class="deco gira" style="top:14%;right:6%;" />
+  <Icon name="estrella" size={38} class="deco" style="top:46%;left:6%;--r:15deg;animation-duration:3.2s" />
+  <Icon name="concha" size={38} class="deco" style="top:52%;right:5%;--r:-10deg;animation-duration:3.6s" />
+  <Icon name="hibisco" size={34} class="deco gira" style="top:30%;left:12%;animation-duration:9s" />
+
+  <!-- Canoa navegando -->
+  <div class="canoa" aria-hidden="true">
+    <svg viewBox="0 0 90 70" width="90">
+      <path d="M44 6 L44 48" stroke="#8a5a3b" stroke-width="3" />
+      <path d="M46 8 C64 16 72 34 70 46 L46 46Z" fill="#FF7A59" />
+      <path d="M42 12 C30 22 26 36 28 46 L42 46Z" fill="#FFC2DD" />
+      <circle cx="58" cy="32" r="5" fill="#FFC94D" />
+      <path d="M6 48 H84 C80 60 70 64 45 64 C20 64 10 60 6 48Z" fill="#a0673f" />
+      <path d="M12 52 H78" stroke="#7a4a2c" stroke-width="2" />
+    </svg>
+  </div>
+
+  <!-- Delfín saltando -->
+  <div class="delfin" aria-hidden="true">🐬</div>
+
+  <div class="contenedor contenido">
+    <div class="foto" aria-label={`Foto de ${fiesta.nombreCorto}`}>
+      {fiesta.tieneFoto ? (
+        <img src="/amy.jpg" alt={fiesta.nombreCorto} />
+      ) : (
+        <Icon name="hibisco" size={120} class="flor-giro" />
+      )}
+      <span class="anillo" aria-hidden="true"></span>
+      <span class="corona" aria-hidden="true">👑</span>
+    </div>
+
+    <p class="hoy entrada" style="--i:0">¡Hoy,</p>
+    <h1 class="nombre" aria-label={fiesta.nombre}>
+      {palabras.map((p) => (
+        <span class="palabra" aria-hidden="true">
+          {[...p].map((c) => {
+            const j = n++;
+            return (
+              <span class="letra" style={`--j:${j}; color:${coloresLetra[j % coloresLetra.length]}`}>{c}</span>
+            );
+          })}
+        </span>
+      ))}
+    </h1>
+    <p class="frase entrada" style="--i:4">
+      este <strong>{fiesta.fechaCorta}</strong> cumple
+    </p>
+    <div class="edad entrada" style="--i:5">
+      <span class="rayos" aria-hidden="true"></span>
+      <span class="numero display">{fiesta.edad}</span>
+      <span class="anos display">años!</span>
+    </div>
+
+    <a href="#invitacion" class="bajar entrada" style="--i:7" aria-label="Ver invitación">
+      <span class="display">¡Ábrela!</span>
+      <span class="flecha">↓</span>
+    </a>
+    <a href="#confirmar" class="ir-confirmar entrada" style="--i:8">
+      💌 Confirmar asistencia
+    </a>
+  </div>
+
+  <Waves color="var(--blanco)" />
+</header>
+
+<script>
+  import { lanzarConfeti } from '../scripts/fiesta';
+  setTimeout(() => lanzarConfeti(70), 1600);
+  // Tocar el 4 lanza más confeti
+  document.querySelector('.numero')?.addEventListener('click', () => lanzarConfeti(40));
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 64px 0 150px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(180deg, #ffc6de 0%, #a6ece4 22%, var(--turquesa) 55%, var(--oceano) 100%);
+    background-size: 100% 130%;
+    animation: cielo 10s ease-in-out infinite alternate;
+    overflow: hidden;
+  }
+  @keyframes cielo { to { background-position: 0 100%; } }
+  .contenido { position: relative; z-index: 3; }
+
+  .sol {
+    position: absolute; top: -90px; left: 50%; width: 280px; height: 280px; margin-left: -140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,240,170,.95) 0%, rgba(255,201,77,.4) 45%, transparent 70%);
+    animation: latido 4s ease-in-out infinite;
+  }
+
+  .burbujas span {
+    position: absolute; bottom: -20px; left: var(--x);
+    width: var(--s); height: var(--s); border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.7); background: rgba(255,255,255,.15);
+    animation: subir var(--d) linear infinite; animation-delay: var(--delay);
+  }
+  @keyframes subir {
+    0% { transform: translate(0, 0); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translate(14px, -50vh); }
+    100% { transform: translate(-8px, -105vh); opacity: 0; }
+  }
+
+  .destellos span {
+    position: absolute; color: #fff; font-size: 18px;
+    animation: titilar 2.2s ease-in-out infinite;
+    text-shadow: 0 0 10px rgba(255,255,255,.9);
+  }
+  @keyframes titilar {
+    0%, 100% { transform: scale(.3) rotate(0); opacity: 0; }
+    50% { transform: scale(1.2) rotate(90deg); opacity: 1; }
+  }
+
+  :global(.deco) { position: absolute; z-index: 1; animation: flotar 4s ease-in-out infinite; }
+  :global(.deco.gira) { animation: girar 7s linear infinite; }
+
+  /* Canoa */
+  .canoa {
+    position: absolute; bottom: clamp(48px, 9vw, 90px); left: 0; z-index: 2;
+    animation: navegar 22s linear infinite;
+  }
+  .canoa svg { display: block; animation: mecer 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes navegar { from { transform: translateX(-120px); } to { transform: translateX(calc(100vw + 20px)); } }
+  @keyframes mecer { 0%, 100% { transform: rotate(-5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-6px); } }
+
+  /* Delfín */
+  .delfin {
+    position: absolute; bottom: 70px; right: 18%; font-size: 44px; z-index: 2;
+    opacity: 0; animation: saltar 5s ease-in-out infinite 2s;
+  }
+  @keyframes saltar {
+    0% { transform: translate(0, 40px) rotate(-50deg); opacity: 0; }
+    8% { opacity: 1; }
+    25% { transform: translate(-50px, -90px) rotate(-10deg); }
+    45% { transform: translate(-100px, 30px) rotate(40deg); opacity: 1; }
+    50%, 100% { transform: translate(-100px, 60px) rotate(50deg); opacity: 0; }
+  }
+
+  /* Foto */
+  .foto {
+    position: relative; width: 168px; height: 168px; margin: 0 auto 28px;
+    border-radius: 50%; background: rgba(255,255,255,.25);
+    display: grid; place-items: center;
+    box-shadow: 0 0 0 8px rgba(255,255,255,.3), 0 20px 40px rgba(8,70,90,.25);
+    animation: aparecer 1s cubic-bezier(.2,1.4,.4,1) both, flotar 4s ease-in-out infinite 1s;
+  }
+  .foto img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 15%; }
+  :global(.flor-giro) { animation: girar 10s linear infinite; }
+  .anillo {
+    position: absolute; inset: -16px; border-radius: 50%;
+    border: 3px dashed rgba(255,255,255,.75);
+    animation: girar 16s linear infinite reverse;
+  }
+  .corona {
+    position: absolute; top: -34px; left: 50%; margin-left: -20px; font-size: 40px;
+    animation: brincar 2s ease-in-out infinite;
+  }
+  @keyframes aparecer { from { transform: scale(0) rotate(-90deg); opacity: 0; } }
+
+  .hoy { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; letter-spacing: .05em; }
+
+  /* Nombre: cada letra cae y luego baila */
+  .nombre { font-size: clamp(2.5rem, 12vw, 3.8rem); font-weight: 700; margin: 6px 0 14px; }
+  .palabra { display: inline-block; margin: 0 .14em; white-space: nowrap; }
+  .letra {
+    display: inline-block;
+    text-shadow: 0 4px 0 rgba(8,70,90,.22), 0 8px 20px rgba(8,70,90,.2);
+    animation:
+      caerLetra .7s cubic-bezier(.3,1.6,.5,1) both,
+      bailar 2.2s ease-in-out infinite;
+    animation-delay: calc(.6s + var(--j) * .07s), calc(1.8s + var(--j) * .1s);
+  }
+  @keyframes caerLetra { from { transform: translateY(-120px) rotate(-30deg) scale(.4); opacity: 0; } }
+  @keyframes bailar {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25% { transform: translateY(-9px) rotate(-7deg); }
+    50% { transform: translateY(0) rotate(0); }
+    75% { transform: translateY(-4px) rotate(5deg); }
+  }
+
+  .frase { font-size: 1.2rem; }
+  .frase strong { font-weight: 700; }
+
+  .edad { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin-top: 4px; }
+  .rayos {
+    position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; margin: -140px 0 0 -150px;
+    background: repeating-conic-gradient(rgba(255,255,255,.22) 0 10deg, transparent 10deg 20deg);
+    border-radius: 50%;
+    -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%);
+    mask: radial-gradient(circle, #000 30%, transparent 70%);
+    animation: girar 14s linear infinite;
+    z-index: -1;
+  }
+  .numero {
+    font-size: clamp(7.5rem, 36vw, 10.5rem); font-weight: 700; line-height: .9;
+    color: var(--sol); cursor: pointer;
+    text-shadow: 0 6px 0 #f5a623, 0 12px 0 #ff7a59, 0 22px 30px rgba(8,70,90,.3);
+    display: inline-block;
+    animation: rebote 3s ease-in-out infinite 2.4s;
+  }
+  .anos { font-size: 1.9rem; font-weight: 600; padding-bottom: 18px; animation: latido 1.5s ease-in-out infinite; }
+  @keyframes rebote {
+    0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+    12% { transform: translateY(-26px) rotate(-8deg) scale(1.06); }
+    24% { transform: translateY(0) rotate(5deg) scale(.96, 1.04); }
+    32% { transform: translateY(-8px) rotate(0); }
+    40% { transform: translateY(0); }
+    65% { transform: translateY(-30px) rotate(0) scale(1.1); }
+    80% { transform: translateY(-30px) rotate(360deg) scale(1.1); }
+    90% { transform: translateY(0) rotate(360deg) scale(.95, 1.05); }
+  }
+
+  .entrada { opacity: 0; animation: subirTexto .9s cubic-bezier(.2,1.4,.4,1) forwards; animation-delay: calc(.5s + var(--i) * .2s); }
+  @keyframes subirTexto { from { opacity: 0; transform: translateY(30px) scale(.8); } to { opacity: 1; transform: none; } }
+
+  .bajar {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
+    margin-top: 26px; padding: 10px 26px; border-radius: 999px;
+    background: #fff; color: #d63d84; text-decoration: none; font-size: 1.1rem;
+    box-shadow: 0 8px 0 rgba(214,61,132,.25), 0 14px 24px rgba(8,70,90,.25);
+  }
+  .bajar .display { animation: menear 3s ease-in-out infinite 3s; display: inline-block; }
+  .flecha { animation: brincar 1.2s ease-in-out infinite; display: inline-block; font-weight: 700; }
+  .ir-confirmar {
+    display: flex; width: fit-content; margin: 16px auto 0; padding: 10px 22px; border-radius: 999px;
+    background: rgba(255,255,255,.18); color: #fff; border: 2px solid rgba(255,255,255,.85);
+    text-decoration: none; font-weight: 700; font-size: 1rem;
+    backdrop-filter: blur(4px); transition: background .2s, scale .2s;
+  }
+  .ir-confirmar:hover { background: rgba(255,255,255,.3); scale: 1.04; }
+  .ir-confirmar:active { scale: .96; }
+</style>

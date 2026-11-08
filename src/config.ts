@@ -43,5 +43,11 @@ export const fiesta = {
     'Familia Palma Cruz',
     'Familia Valdivia Perez',
     'Familia Rochetti Liendo',
+    'Gerson Vilca',
+    'Boris Calle',
+    'Pancho Rivera',
+    'Abisag Mamani',
+    'Sofia Ramos',
+    'Alexander Neyra',
   ],
 };

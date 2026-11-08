@@ -16,7 +16,7 @@ export const fiesta = {
   // Foto de Amy: colócala en /public/amy.jpg y cambia a true
   tieneFoto: true,
   invitados: [
-    'Familia Acho',
+    'Familia Acho Damian',
     'Familia Quinteros',
     'Familia Quinteros Mac-Kay',
     'Familia Ramos Loayza',

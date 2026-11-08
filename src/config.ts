@@ -8,9 +8,9 @@ export const fiesta = {
   fechaTexto: 'sábado 28 de noviembre',
   fechaCorta: '28 de noviembre',
   hora: '4:00 p. m.',
-  lugar: 'VACO',
+  lugar: 'CLUB CAMPESTRE VACO',
   direccion: 'Tarapacá con Gustavo Pinto, más arriba del colegio "Las Cumbres", Tacna, Perú',
-  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Tarapacá con Gustavo Pinto, Tacna, Perú'),
+  mapsUrl: 'https://maps.app.goo.gl/ckUHgXSnQH4FxdRT6',
   // Número de WhatsApp con código de país, sin "+" ni espacios
   whatsapp: '51957295957',
   // Foto de Amy: colócala en /public/amy.jpg y cambia a true

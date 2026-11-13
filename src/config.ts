@@ -43,6 +43,7 @@ export const fiesta = {
     'Familia Palma Cruz',
     'Familia Valdivia Perez',
     'Familia Rochetti Liendo',
+    'Familia Ramos Preciado',
     'Gerson Vilca',
     'Boris Calle',
     'Pancho Rivera',
